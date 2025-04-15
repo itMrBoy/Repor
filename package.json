@@ -6,7 +6,9 @@
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "prepare": "husky",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "antd": "^5.24.7",
@@ -17,7 +19,8 @@
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "@umijs/plugins": "^4.4.6",
-    "typescript": "^5.0.3",
-    "tailwindcss": "^3"
+    "husky": "^9.1.7",
+    "tailwindcss": "^3",
+    "typescript": "^5.0.3"
   }
 }
