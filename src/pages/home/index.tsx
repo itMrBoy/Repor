@@ -2,6 +2,8 @@ import { Tabs, Input, Upload, Button, message, Space } from 'antd';
 import { UploadOutlined, SendOutlined } from '@ant-design/icons';
 import styles from './home.less';
 import { useState } from 'react';
+import { gitService } from '@/services/git';
+import { uploadService } from '@/services/upload';
 
 export default function HomePage() {
   const [gitUrl, setGitUrl] = useState('');
@@ -21,20 +23,39 @@ export default function HomePage() {
       
       try {
         setLoading(true);
-        message.success('代码克隆成功');
+        const response = await gitService.clone(gitUrl);
+        message.success(response.message);
       } catch (error) {
         console.error('Git clone error:', error);
-        message.error('代码克隆失败，请检查Git地址是否正确');
+        // 错误已在响应拦截器中处理
       } finally {
         setLoading(false);
       }
     }
   };
 
-  const handleUpload = (info: any) => {
+  const handleUpload = async (info: any) => {
+    console.log('info', info);
+    if (info.file.status === 'loading') {
+      setLoading(true);
+      return;
+    }
+
     if (info.file.status === 'done') {
-      message.success(`${info.file.name} 上传成功`);
+      try {
+        const formData = new FormData();
+        formData.append('files', info.file.originFileObj);
+        
+        const response = await uploadService.upload(formData);
+        message.success(response.message);
+      } catch (error) {
+        console.error('Upload error:', error);
+        // 错误已在响应拦截器中处理
+      } finally {
+        setLoading(false);
+      }
     } else if (info.file.status === 'error') {
+      setLoading(false);
       message.error(`${info.file.name} 上传失败`);
     }
   };
@@ -76,6 +97,7 @@ export default function HomePage() {
             <Button 
               icon={<UploadOutlined />}
               className={styles.uploadButton}
+              loading={loading}
             >
               上传文件夹
             </Button>
@@ -85,6 +107,7 @@ export default function HomePage() {
             icon={<SendOutlined />}
             onClick={handleSubmit}
             className={styles.submitButton}
+            loading={loading}
           >
             提交
           </Button>
