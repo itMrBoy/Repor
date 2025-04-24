@@ -1,45 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import * as fs from 'fs';
-import * as path from 'path';
+import path from 'path';
+import fs from 'fs-extra';
+import { buildDirectoryTree } from './buildDirectoryTree.service';
 
 const execAsync = promisify(exec);
 
 @Injectable()
 export class GitService {
-  private readonly reporDir = path.join(process.cwd(), '.repor');
+  private readonly cloneDir: string;
 
-  async cloneRepository(url: string): Promise<{ success: boolean; message: string }> {
+  constructor() {
+    this.cloneDir = path.join(process.cwd(), '.repor');
+  }
+
+  async cloneRepository(url: string) {
     try {
-      // 检查 .repor 目录是否存在
-      if (fs.existsSync(this.reporDir)) {
-        // 如果存在，先清空目录
-        fs.rmSync(this.reporDir, { recursive: true, force: true });
-      }
-      // 创建新的 .repor 目录
-      fs.mkdirSync(this.reporDir);
+      // 确保克隆目录存在
+      await fs.ensureDir(this.cloneDir);
+      
+      // 清空目录
+      await fs.emptyDir(this.cloneDir);
 
+      console.log('开始克隆');
       // 执行 git clone
       const { stdout, stderr } = await execAsync(`git clone ${url}`, {
-        cwd: this.reporDir,
+        cwd: this.cloneDir,
+        env: { ...process.env, GIT_SSL_NO_VERIFY: '1' }
       });
-
+      console.log('克隆完成: ', stdout, '---', stderr);
       if (stderr && !stderr.includes('Cloning into')) {
-        return {
-          success: false,
-          message: `克隆失败: ${stderr}`,
-        };
+        throw new Error(stderr);
       }
+
+      // 构建目录树
+      const tree = await buildDirectoryTree(this.cloneDir);
 
       return {
         success: true,
         message: '克隆成功',
+        tree
       };
     } catch (error: any) {
+      console.error('Git clone error:', error);
       return {
         success: false,
         message: `克隆失败: ${error.message}`,
+        path: null
       };
     }
   }

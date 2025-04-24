@@ -1,21 +1,20 @@
-import { Tabs, Input, Upload, Button, message, Space } from 'antd';
-import { UploadOutlined, SendOutlined } from '@ant-design/icons';
+import { Tabs, Input, Button, message, Space } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
 import styles from './home.less';
 import { useState } from 'react';
-import { gitService } from '@/services/git';
-import { uploadService } from '@/services/upload';
+import { gitService, analyzeService } from '@/services/index';
 
 export default function HomePage() {
   const [gitUrl, setGitUrl] = useState('');
   const [activeTab, setActiveTab] = useState('1');
   const [loading, setLoading] = useState(false);
+  const [path, setPath] = useState('');
 
   const handleGitUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGitUrl(e.target.value);
   };
 
-  const handleSubmit = async () => {
-    if (activeTab === '1') {
+  const handleGitUrlSubmit = async () => {
       if (!gitUrl) {
         message.warning('请输入Git仓库地址');
         return;
@@ -31,32 +30,35 @@ export default function HomePage() {
       } finally {
         setLoading(false);
       }
+  };
+
+  const handleSubmit = async () => {
+    if (activeTab === '1') {
+      handleGitUrlSubmit();
+    } else {
+      handleProjectSubmit();
     }
   };
 
-  const handleUpload = async (info: any) => {
-    console.log('info', info);
-    if (info.file.status === 'loading') {
-      setLoading(true);
+  const handlePathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPath(e.target.value);
+  };
+
+  const handleProjectSubmit = async () => {
+    if (!path) {
+      message.warning('请输入项目路径');
       return;
     }
 
-    if (info.file.status === 'done') {
-      try {
-        const formData = new FormData();
-        formData.append('files', info.file.originFileObj);
-        
-        const response = await uploadService.upload(formData);
-        message.success(response.message);
-      } catch (error) {
-        console.error('Upload error:', error);
-        // 错误已在响应拦截器中处理
-      } finally {
-        setLoading(false);
-      }
-    } else if (info.file.status === 'error') {
+    try {
+      setLoading(true);
+      const response = await analyzeService.analyze(path);
+      message.success(response.message);
+    } catch (error) {
+      console.error('Analyze error:', error);
+      message.error('分析失败');
+    } finally {
       setLoading(false);
-      message.error(`${info.file.name} 上传失败`);
     }
   };
 
@@ -89,19 +91,12 @@ export default function HomePage() {
       label: '上传项目',
       children: (
         <Space direction="vertical" style={{ width: '100%' }}>
-          <Upload
-            directory
-            onChange={handleUpload}
-            showUploadList={false}
-          >
-            <Button 
-              icon={<UploadOutlined />}
-              className={styles.uploadButton}
-              loading={loading}
-            >
-              上传文件夹
-            </Button>
-          </Upload>
+          <Input
+            placeholder="请输入项目路径"
+            value={path}
+            onChange={handlePathChange}
+            style={{ width: '100%', maxWidth: '500px' }}
+          />
           <Button 
             type="primary" 
             icon={<SendOutlined />}

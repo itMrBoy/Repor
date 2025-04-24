@@ -4,7 +4,7 @@ import { message } from 'antd';
 // 创建 axios 实例
 const request = axios.create({
   baseURL: '/api',
-  timeout: 10000,
+  timeout: 60 * 1000,
 });
 
 // 请求拦截器

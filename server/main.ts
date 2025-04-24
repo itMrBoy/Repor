@@ -1,7 +1,7 @@
 import express from 'express';
 import { json } from 'body-parser';
 import { GitController } from './controllers/git.controller';
-import { UploadController } from './controllers/upload.controller';
+import { AnalyzeController } from './controllers/analyze.controller';
 import cors from 'cors';
 
 const app = express();
@@ -27,9 +27,9 @@ app.post('/api/git/clone', (req, res) => {
   GitController.cloneRepository(req, res);
 });
 
-app.post('/api/upload', (req, res) => {
+app.post('/api/analyze', (req, res) => {
   console.log('收到上传请求');
-  UploadController.uploadFolder(req, res);
+  AnalyzeController.analyze(req, res);
 });
 
 // 错误处理中间件

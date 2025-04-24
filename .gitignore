@@ -8,3 +8,5 @@
 /dist
 .swc
 pnpm-lock.yaml
+.codelf
+.repor

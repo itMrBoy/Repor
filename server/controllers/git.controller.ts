@@ -22,7 +22,7 @@ export class GitController {
       res.json({
         code: result.success ? ResponseCode.SUCCESS : ResponseCode.SYSTEM_ERROR,
         message: result.message,
-        timestamp: Date.now()
+        data: { tree: result.tree },
       });
     } catch (error: any) {
       res.status(500).json({
