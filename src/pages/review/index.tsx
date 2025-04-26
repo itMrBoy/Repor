@@ -49,8 +49,18 @@ const ReviewPage: React.FC = () => {
                 key: 'path',
                 children: 'children',
               }}
-              defaultExpandAll
-              onSelect={onSelect}
+              autoExpandParent={true}
+              defaultExpandAll={true}
+              onSelect={(selectedKeys, info) => {
+                // 只允许选择叶子节点
+                if (info.node.children) {
+                  return;
+                }
+                onSelect(selectedKeys, info);
+              }}
+              selectable={true}
+              showLine={true}
+              blockNode={true}
             />
           </div>
         </Sider>
