@@ -1,6 +1,6 @@
 import { Tabs, Input, Button, message, Space, List, Typography } from 'antd';
 import { SendOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import styles from './home.less';
+import styles from './index.less';
 import { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useModel } from '@umijs/max';
@@ -112,7 +112,7 @@ export default function HomePage() {
       key: '1',
       label: '历史项目',
       children: (
-        <div style={{ width: '100%', maxWidth: '800px' }}>
+        <div className={styles.scrollableList}>
           <List
             dataSource={clonedProjects}
             renderItem={(project) => (
