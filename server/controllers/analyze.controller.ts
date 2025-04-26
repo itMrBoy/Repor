@@ -21,7 +21,6 @@ export class AnalyzeController {
     if (!content.includes(dirPath)) {
       await fs.appendFile(reportPath, `${dirPath} ${new Date().toISOString()}\n`);
     }
-    console.log('reportPath', reportPath);
   }
 
   static async analyze(req: Request, res: Response) {

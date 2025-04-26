@@ -24,7 +24,6 @@ export default function HomePage() {
   const fetchClonedProjects = async () => {
     try {
       const response = await fileListService();
-      console.log('获取项目列表:', response);
       setClonedProjects(response.data);
     } catch (error) {
       console.error('Fetch projects error:', error);

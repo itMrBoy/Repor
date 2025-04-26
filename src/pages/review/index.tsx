@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Breadcrumb, Layout, Tree } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from '@umijs/max';
 import styles from './index.less';
 import { useModel } from '@umijs/max';
@@ -28,11 +28,8 @@ const ReviewPage: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: <HomeOutlined />,
+              title: <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}><ArrowLeftOutlined style={{ marginRight: '8px' }} /> 返回</div>,
               onClick: () => navigate(-1),
-            },
-            {
-              title: 'Hi, Repor',
             },
           ]}
         />
@@ -49,14 +46,13 @@ const ReviewPage: React.FC = () => {
                 key: 'path',
                 children: 'children',
               }}
-              autoExpandParent={true}
-              defaultExpandAll={true}
+              defaultExpandAll
               onSelect={(selectedKeys, info) => {
                 // 只允许选择叶子节点
                 if (info.node.children) {
                   return;
                 }
-                onSelect(selectedKeys, info);
+                onSelect(selectedKeys);
               }}
               selectable={true}
               showLine={true}
