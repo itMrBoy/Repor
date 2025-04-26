@@ -4,6 +4,11 @@ import { GitController } from './controllers/git.controller';
 import { AnalyzeController } from './controllers/analyze.controller';
 import { FileController } from './controllers/file.controller';
 import cors from 'cors';
+import { config } from 'dotenv';
+
+// 加载环境变量
+config();
+const FE_PORT = process.env.PORT || 8000;
 
 const app = express();
 const port = 3000;
@@ -11,7 +16,7 @@ const port = 3000;
 // 中间件
 app.use(json());
 app.use(cors({
-  origin: 'http://localhost:8000', // 前端开发服务器地址
+  origin: `http://localhost:${FE_PORT}`, // 前端开发服务器地址
   credentials: true,
 }));
 
@@ -24,6 +29,11 @@ app.use((req, res, next) => {
 app.post('/api/git/clone', (req, res) => {
   console.log('收到克隆请求:', req.body);
   GitController.cloneRepository(req, res);
+});
+
+app.get('/api/git/projects', (req, res) => {
+  console.log('收到获取克隆项目请求');
+  GitController.getClonedProjects(req, res);
 });
 
 app.post('/api/analyze', (req, res) => {

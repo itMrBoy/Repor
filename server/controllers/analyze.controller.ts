@@ -6,6 +6,23 @@ import { ResponseMessage } from '../constants/response-message';
 import { buildDirectoryTree } from '../services/buildDirectoryTree.service';
 
 export class AnalyzeController {
+  static async appendFileFunc(dirPath: string) {
+    // 判断.report目录下是否存在一个report.json文件
+    // 如果.report目录不存在则创建，将本次path写入
+    // 如果.report目录存在，则将本次path写入report.json
+    // 将本次path写入report.json
+    const reportPath = path.join(process.cwd(), '.repor', 'repor.txt');
+    // 如果reportPath不存在，则创建
+    if (!await fs.pathExists(reportPath)) {
+      await fs.createFile(reportPath);
+    }
+    // 判断reportPath里面是否包含dirPath，不包含则追加写入
+    const content = await fs.readFile(reportPath, 'utf-8');
+    if (!content.includes(dirPath)) {
+      await fs.appendFile(reportPath, `${dirPath} ${new Date().toISOString()}\n`);
+    }
+    console.log('reportPath', reportPath);
+  }
 
   static async analyze(req: Request, res: Response) {
     try {
@@ -27,6 +44,8 @@ export class AnalyzeController {
           timestamp: Date.now()
         });
       }
+      
+      this.appendFileFunc(dirPath);
 
       // 检查是否是目录
       const stats = await fs.stat(dirPath);

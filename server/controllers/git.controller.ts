@@ -32,4 +32,22 @@ export class GitController {
       });
     }
   }
-} 
+
+  static async getClonedProjects(req: Request, res: Response) {
+    try {
+      const result = await GitController.gitService.getClonedProjects();
+      res.json({
+        code: result.success ? ResponseCode.SUCCESS : ResponseCode.SYSTEM_ERROR,
+        message: result.message,
+        data: result.projects || [],
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        code: ResponseCode.SYSTEM_ERROR,
+        message: `服务器错误: ${error.message}`,
+        timestamp: Date.now()
+      });
+    }
+  }
+}
+

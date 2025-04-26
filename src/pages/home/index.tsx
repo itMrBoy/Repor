@@ -1,18 +1,51 @@
-import { Tabs, Input, Button, message, Space } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
+import { Tabs, Input, Button, message, Space, List, Typography } from 'antd';
+import { SendOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import styles from './home.less';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useModel } from '@umijs/max';
+import dayjs from 'dayjs';
+import { fileListService } from '@/services';
 
 export default function HomePage() {
   const [gitUrl, setGitUrl] = useState('');
   const [activeTab, setActiveTab] = useState('1');
   const [path, setPath] = useState('');
+  const [clonedProjects, setClonedProjects] = useState<any[]>([]);
   
   const navigate = useNavigate();
   const { state, actions } = useModel('tree');
   const { loading } = state;
+
+  useEffect(() => {
+    fetchClonedProjects();
+  }, []);
+
+  const fetchClonedProjects = async () => {
+    try {
+      const response = await fileListService();
+      console.log('获取项目列表:', response);
+      setClonedProjects(response.data);
+    } catch (error) {
+      console.error('Fetch projects error:', error);
+      message.error('获取项目列表失败');
+    }
+  };
+
+  const handleProjectSelect = async (projectPath: string) => {
+    try {
+      const response = await actions.fetchTreeData(projectPath, 'path');
+      if (response.success) {
+        message.success('项目加载成功');
+        navigate('/review');
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      console.error('Load project error:', error);
+      message.error('加载项目失败');
+    }
+  };
 
   const handleGitUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGitUrl(e.target.value);
@@ -78,6 +111,34 @@ export default function HomePage() {
   const items = [
     {
       key: '1',
+      label: '历史项目',
+      children: (
+        <div style={{ width: '100%', maxWidth: '800px' }}>
+          <List
+            dataSource={clonedProjects}
+            renderItem={(project) => (
+              <List.Item style={{ padding: '8px 0' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  width: '100%',
+                  color: 'white'
+                }}>
+                  <div style={{ fontSize: '16px', marginBottom: '4px', cursor: 'pointer' }} onClick={() => handleProjectSelect(project.path)}>{project.name}（ {project.path} ）</div>
+                  <div style={{ fontSize: '12px', opacity: 0.7 }}>
+                    <ClockCircleOutlined style={{ marginRight: '4px' }} />
+                    {dayjs(project.lastModified).format('YYYY-MM-DD HH:mm:ss')}
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+      ),
+    },
+    {
+      key: '2',
       label: 'Git源',
       children: (
         <Space direction="vertical" style={{ width: '100%' }}>
@@ -100,8 +161,8 @@ export default function HomePage() {
       ),
     },
     {
-      key: '2',
-      label: '上传项目',
+      key: '3',
+      label: '本地项目',
       children: (
         <Space direction="vertical" style={{ width: '100%' }}>
           <Input

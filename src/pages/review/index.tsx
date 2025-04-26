@@ -32,7 +32,7 @@ const ReviewPage: React.FC = () => {
               onClick: () => navigate(-1),
             },
             {
-              title: '代码审查',
+              title: 'Hi, Repor',
             },
           ]}
         />

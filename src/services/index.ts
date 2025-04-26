@@ -22,6 +22,13 @@ export interface DirectoryNode {
   children?: DirectoryNode[];
 }
 
+export const fileListService = async (path: string): Promise<Response> => {
+  return request('/git/projects', {
+    method: 'GET',
+    params: { path },
+  });
+}; 
+
 export const gitService = {
   clone: (url: string): Promise<Response> => {
     return request.post('/git/clone', { url });
