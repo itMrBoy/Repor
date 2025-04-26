@@ -2,6 +2,7 @@ import express from 'express';
 import { json } from 'body-parser';
 import { GitController } from './controllers/git.controller';
 import { AnalyzeController } from './controllers/analyze.controller';
+import { FileController } from './controllers/file.controller';
 import cors from 'cors';
 
 const app = express();
@@ -16,8 +17,6 @@ app.use(cors({
 
 // 请求日志中间件
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  console.log('请求体:', req.body);
   next();
 });
 
@@ -30,6 +29,11 @@ app.post('/api/git/clone', (req, res) => {
 app.post('/api/analyze', (req, res) => {
   console.log('收到上传请求');
   AnalyzeController.analyze(req, res);
+});
+
+app.get('/api/file/content', (req, res) => {
+  console.log('收到文件内容请求:', req.query);
+  FileController.getFileContent(req, res);
 });
 
 // 错误处理中间件

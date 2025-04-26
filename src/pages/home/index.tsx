@@ -2,41 +2,38 @@ import { Tabs, Input, Button, message, Space } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import styles from './home.less';
 import { useState } from 'react';
-import { gitService, analyzeService } from '@/services/index';
+import { useNavigate } from '@umijs/max';
+import { useModel } from '@umijs/max';
 
 export default function HomePage() {
   const [gitUrl, setGitUrl] = useState('');
   const [activeTab, setActiveTab] = useState('1');
-  const [loading, setLoading] = useState(false);
   const [path, setPath] = useState('');
+  
+  const navigate = useNavigate();
+  const { state, actions } = useModel('tree');
+  const { loading } = state;
 
   const handleGitUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGitUrl(e.target.value);
   };
 
   const handleGitUrlSubmit = async () => {
-      if (!gitUrl) {
-        message.warning('请输入Git仓库地址');
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        const response = await gitService.clone(gitUrl);
+    if (!gitUrl) {
+      message.warning('请输入Git仓库地址');
+      return;
+    }
+    
+    try {
+      const response = await actions.fetchTreeData(gitUrl, 'git');
+      if (response.success) {
         message.success(response.message);
-      } catch (error) {
-        console.error('Git clone error:', error);
-        // 错误已在响应拦截器中处理
-      } finally {
-        setLoading(false);
+        return response;
+      } else {
+        message.error(response.message);
       }
-  };
-
-  const handleSubmit = async () => {
-    if (activeTab === '1') {
-      handleGitUrlSubmit();
-    } else {
-      handleProjectSubmit();
+    } catch (error) {
+      console.error('Git clone error:', error);
     }
   };
 
@@ -47,18 +44,34 @@ export default function HomePage() {
   const handleProjectSubmit = async () => {
     if (!path) {
       message.warning('请输入项目路径');
-      return;
+      return Promise.reject();
     }
 
     try {
-      setLoading(true);
-      const response = await analyzeService.analyze(path);
-      message.success(response.message);
+      const response = await actions.fetchTreeData(path, 'path');
+      if (response.success) {
+        message.success(response.message);
+        return response;
+      } else {
+        message.error(response.message);
+        return Promise.reject();
+      }
     } catch (error) {
       console.error('Analyze error:', error);
       message.error('分析失败');
-    } finally {
-      setLoading(false);
+      return Promise.reject();
+    }
+  };
+
+  const handleSubmit = async () => {
+    let response;
+    if (activeTab === '1') {
+      response = await handleGitUrlSubmit();
+    } else {
+      response = await handleProjectSubmit();
+    }
+    if (response?.success) {
+      navigate('/review');
     }
   };
 

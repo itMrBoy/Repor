@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
@@ -7,7 +6,6 @@ import { buildDirectoryTree } from './buildDirectoryTree.service';
 
 const execAsync = promisify(exec);
 
-@Injectable()
 export class GitService {
   private readonly cloneDir: string;
 
@@ -23,13 +21,11 @@ export class GitService {
       // 清空目录
       await fs.emptyDir(this.cloneDir);
 
-      console.log('开始克隆');
       // 执行 git clone
       const { stdout, stderr } = await execAsync(`git clone ${url}`, {
         cwd: this.cloneDir,
         env: { ...process.env, GIT_SSL_NO_VERIFY: '1' }
       });
-      console.log('克隆完成: ', stdout, '---', stderr);
       if (stderr && !stderr.includes('Cloning into')) {
         throw new Error(stderr);
       }

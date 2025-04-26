@@ -1,11 +1,12 @@
-import { defineConfig } from "umi";
+import { defineConfig } from "@umijs/max";
 
 export default defineConfig({
-  routes: [{ path: "/", component: "home" }],
+  routes: [
+    { path: "/", component: "home" },
+    { path: "/review", component: "review" },
+  ],
 
   npmClient: "pnpm",
-  tailwindcss: {},
-  plugins: ["@umijs/plugins/dist/tailwindcss"],
   
   // 添加全局样式
   styles: ['/src/global.less'],
@@ -21,4 +22,9 @@ export default defineConfig({
       // pathRewrite: { '^/api': '' },
     },
   },
+
+  // 启用插件
+  model: {},
+  antd: {},
+  valtio: {},
 });
