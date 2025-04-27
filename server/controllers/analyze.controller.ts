@@ -43,8 +43,11 @@ export class AnalyzeController {
           timestamp: Date.now()
         });
       }
-      
-      this.appendFileFunc(dirPath);
+
+      // 如果dirPatth是.report目录，则不进行分析
+      if (!dirPath.startsWith(path.join(process.cwd(), '.repor'))) {
+        this.appendFileFunc(dirPath);
+      }
 
       // 检查是否是目录
       const stats = await fs.stat(dirPath);

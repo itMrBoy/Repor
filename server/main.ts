@@ -37,7 +37,7 @@ app.get('/api/git/projects', (req, res) => {
 });
 
 app.post('/api/analyze', (req, res) => {
-  console.log('收到上传请求');
+  console.log('收到本地目录请求');
   AnalyzeController.analyze(req, res);
 });
 
