@@ -10,6 +10,9 @@ import fileIcons from './fileIcons.json';
 
 const { Content, Sider } = Layout;
 
+// 本地存储的键名
+const TREE_DATA_KEY = 'file_tree_data';
+
 // 获取文件图标类名和颜色
 const getFileIcon = (name: string, isDirectory: boolean) => {
   if (isDirectory) {
@@ -45,8 +48,40 @@ const ReviewPage: React.FC = () => {
   const [treeData, setTreeData] = useState<any>([]);
   const [filePath, setFilePath] = useState<string | null>(null);
 
+  // 保存树数据到本地存储
+  const saveTreeData = (data: any) => {
+    try {
+      sessionStorage.setItem(TREE_DATA_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('保存树数据失败:', error);
+    }
+  };
+
+  // 从本地存储加载树数据
+  const loadTreeData = () => {
+    try {
+      const savedData = sessionStorage.getItem(TREE_DATA_KEY);
+      if (savedData) {
+        return JSON.parse(savedData);
+      }
+    } catch (error) {
+      console.error('加载树数据失败:', error);
+    }
+    return [];
+  };
+
   useEffect(() => {
-    setTreeData(state.treeData);
+    // 如果 state 中有数据，使用 state 的数据并保存
+    if (state.treeData && state.treeData.length > 0) {
+      setTreeData(state.treeData);
+      saveTreeData(state.treeData);
+    } else {
+      // 否则尝试从本地存储加载
+      const savedData = loadTreeData();
+      if (savedData && savedData.length > 0) {
+        setTreeData(savedData);
+      }
+    }
   }, [state]);
 
   const onSelect = (selectedKeys: React.Key[]) => {
