@@ -97,7 +97,7 @@ export default function HomePage() {
 
   const handleSubmit = async () => {
     let response;
-    if (activeTab === '1') {
+    if (activeTab === '2') {
       response = await handleGitUrlSubmit();
     } else {
       response = await handleProjectSubmit();
