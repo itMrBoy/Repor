@@ -47,6 +47,7 @@ const ReviewPage: React.FC = () => {
   const { state } = useModel('tree');
   const [treeData, setTreeData] = useState<any>([]);
   const [filePath, setFilePath] = useState<string | null>(null);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
 
   // 保存树数据到本地存储
   const saveTreeData = (data: any) => {
@@ -75,11 +76,21 @@ const ReviewPage: React.FC = () => {
     if (state.treeData && state.treeData.length > 0) {
       setTreeData(state.treeData);
       saveTreeData(state.treeData);
+      // 只展开一级目录
+      const getFirstLevelKeys = (data: any[]): string[] => {
+        return data.map(node => node.path);
+      };
+      setExpandedKeys(getFirstLevelKeys(state.treeData));
     } else {
       // 否则尝试从本地存储加载
       const savedData = loadTreeData();
       if (savedData && savedData.length > 0) {
         setTreeData(savedData);
+        // 只展开一级目录
+        const getFirstLevelKeys = (data: any[]): string[] => {
+          return data.map(node => node.path);
+        };
+        setExpandedKeys(getFirstLevelKeys(savedData));
       }
     }
   }, [state]);
@@ -145,9 +156,10 @@ const ReviewPage: React.FC = () => {
                 key: 'path',
                 children: 'children',
               }}
+              expandedKeys={expandedKeys}
+              onExpand={(keys) => setExpandedKeys(keys)}
               defaultExpandAll
               onSelect={(selectedKeys, info) => {
-                // 只允许选择叶子节点
                 if (info.node.children) {
                   return;
                 }
