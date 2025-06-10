@@ -1,0 +1,19 @@
+# 排除 GitHub 工作流目录
+.github/
+
+# 排除依赖目录
+node_modules/
+
+# 排除生成的文件
+dist/
+build/
+*.min.js
+*.min.css
+
+# 排除锁定文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 排除日志文件
+*.log 
