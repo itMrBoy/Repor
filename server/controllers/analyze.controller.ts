@@ -13,13 +13,15 @@ export class AnalyzeController {
     // 将本次path写入report.json
     const reportPath = path.join(process.cwd(), ".repor", "repor.txt");
     // 如果reportPath不存在，则创建
-    if (!(await fs.pathExists(reportPath))) {
-      await fs.createFile(reportPath);
+    if (!(await fs.pathExists(reportPath))) {  await fs.createFile(reportPath);
+   
+   
+   
     }
     // 判断reportPath里面是否包含dirPath，不包含则追加写入
     const content = await fs.readFile(reportPath, "utf-8");
     if (!content.includes(dirPath)) {
-      await fs.appendFile(
+      await    fs.appendFile(
         reportPath,
         `${dirPath} ${new Date().toISOString()}\n`,
       );
