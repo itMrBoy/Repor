@@ -9,13 +9,11 @@ export class FileController {
       const { path: filePath } = req.query;
 
       if (!filePath) {
-        return res
-          .status(ResponseCode.BAD_REQUEST)
-          .json({
-            code: ResponseCode.BAD_REQUEST,
-            message: "文件路径不能为空",
-            timestamp: Date.now(),
-          });
+        return res.status(ResponseCode.BAD_REQUEST).json({
+          code: ResponseCode.BAD_REQUEST,
+          message: "文件路径不能为空",
+          timestamp: Date.now(),
+        });
       }
 
       // 检查文件是否存在
