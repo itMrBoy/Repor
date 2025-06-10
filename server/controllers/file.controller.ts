@@ -8,13 +8,8 @@ export class FileController {
     try {
       const { path: filePath } = req.query;
 
-      if (!filePath) {
-        return res.status(ResponseCode.BAD_REQUEST).json({
-          code: ResponseCode.BAD_REQUEST,
-          message: "文件路径不能为空",
-          timestamp: Date.now(),
-        });
-      }
+      if (!filePath) {return res.status(ResponseCode.BAD_REQUEST).json({code: ResponseCode.BAD_REQUEST,message: "文件路径不能为空",
+        timestamp: Date.now(),});}
 
       // 检查文件是否存在
       if (!(await fs.pathExists(filePath as string))) {
