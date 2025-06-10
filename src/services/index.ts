@@ -1,4 +1,4 @@
-import request from './axios';
+import request from "./axios";
 
 export interface Response {
   code: number;
@@ -18,25 +18,25 @@ export interface AnalyzeResponse {
 export interface DirectoryNode {
   name: string;
   path: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
   children?: DirectoryNode[];
 }
 
 export const fileListService = async (path: string): Promise<Response> => {
-  return request('/git/projects', {
-    method: 'GET',
+  return request("/git/projects", {
+    method: "GET",
     params: { path },
   });
-}; 
+};
 
 export const gitService = {
   clone: (url: string): Promise<Response> => {
-    return request.post('/git/clone', { url });
+    return request.post("/git/clone", { url });
   },
-}; 
+};
 
 export const analyzeService = {
   analyze: (path: string): Promise<AnalyzeResponse> => {
-    return request.post('/analyze', { path });
+    return request.post("/analyze", { path });
   },
-}; 
+};

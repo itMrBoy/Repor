@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Breadcrumb, Layout, Tree } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useNavigate } from '@umijs/max';
-import styles from './index.less';
-import { useModel } from '@umijs/max';
-import CodeEditor from '@/components/CodeEditor';
-import '@uiw/file-icons/fonts/ffont.css';
-import fileIcons from './fileIcons.json';
+import React, { useState, useEffect } from "react";
+import { Breadcrumb, Layout, Tree } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "@umijs/max";
+import styles from "./index.less";
+import { useModel } from "@umijs/max";
+import CodeEditor from "@/components/CodeEditor";
+import "@uiw/file-icons/fonts/ffont.css";
+import fileIcons from "./fileIcons.json";
 
 const { Content, Sider } = Layout;
 
 // 本地存储的键名
-const TREE_DATA_KEY = 'file_tree_data';
+const TREE_DATA_KEY = "file_tree_data";
 
 // 获取文件图标类名和颜色
 const getFileIcon = (name: string, isDirectory: boolean) => {
   if (isDirectory) {
     return {
-      icon: 'ffont-folder',
-      color: 'medium-blue'
+      icon: "ffont-folder",
+      color: "medium-blue",
     };
   }
-  
-  const ext = name.split('.').pop()?.toLowerCase();
+
+  const ext = name.split(".").pop()?.toLowerCase();
   if (!ext) {
     return {
-      icon: 'ffont-file',
-      color: 'medium-gray'
+      icon: "ffont-file",
+      color: "medium-gray",
     };
   }
 
@@ -37,14 +37,14 @@ const getFileIcon = (name: string, isDirectory: boolean) => {
 
   // 默认使用文件图标
   return {
-    icon: 'ffont-file',
-    color: 'medium-gray'
+    icon: "ffont-file",
+    color: "medium-gray",
   };
 };
 
 const ReviewPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state } = useModel('tree');
+  const { state } = useModel("tree");
   const [treeData, setTreeData] = useState<any>([]);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
@@ -54,7 +54,7 @@ const ReviewPage: React.FC = () => {
     try {
       sessionStorage.setItem(TREE_DATA_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('保存树数据失败:', error);
+      console.error("保存树数据失败:", error);
     }
   };
 
@@ -66,7 +66,7 @@ const ReviewPage: React.FC = () => {
         return JSON.parse(savedData);
       }
     } catch (error) {
-      console.error('加载树数据失败:', error);
+      console.error("加载树数据失败:", error);
     }
     return [];
   };
@@ -78,7 +78,7 @@ const ReviewPage: React.FC = () => {
       saveTreeData(state.treeData);
       // 只展开一级目录
       const getFirstLevelKeys = (data: any[]): string[] => {
-        return data.map(node => node.path);
+        return data.map((node) => node.path);
       };
       setExpandedKeys(getFirstLevelKeys(state.treeData));
     } else {
@@ -88,7 +88,7 @@ const ReviewPage: React.FC = () => {
         setTreeData(savedData);
         // 只展开一级目录
         const getFirstLevelKeys = (data: any[]): string[] => {
-          return data.map(node => node.path);
+          return data.map((node) => node.path);
         };
         setExpandedKeys(getFirstLevelKeys(savedData));
       }
@@ -104,24 +104,35 @@ const ReviewPage: React.FC = () => {
     const processNode = (node: any) => {
       const isDirectory = !!node.children;
       const { icon, color } = getFileIcon(node.name, isDirectory);
-      
+
       return {
         ...node,
         title: (
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <i className={`ffont ${icon} ${color}`} style={{ 
-              marginRight: 8, 
-              display: 'flex', 
-              alignItems: 'center',
-              color: color === 'medium-yellow' ? '#ffd700' :
-                     color === 'medium-blue' ? '#1e90ff' :
-                     color === 'medium-red' ? '#ff4500' :
-                     color === 'medium-purple' ? '#9370db' :
-                     color === 'medium-orange' ? '#ffa500' :
-                     color === 'medium-green' ? '#32cd32' :
-                     color === 'medium-pink' ? '#ff69b4' :
-                     '#808080' // medium-gray
-            }} />
+          <span style={{ display: "flex", alignItems: "center" }}>
+            <i
+              className={`ffont ${icon} ${color}`}
+              style={{
+                marginRight: 8,
+                display: "flex",
+                alignItems: "center",
+                color:
+                  color === "medium-yellow"
+                    ? "#ffd700"
+                    : color === "medium-blue"
+                      ? "#1e90ff"
+                      : color === "medium-red"
+                        ? "#ff4500"
+                        : color === "medium-purple"
+                          ? "#9370db"
+                          : color === "medium-orange"
+                            ? "#ffa500"
+                            : color === "medium-green"
+                              ? "#32cd32"
+                              : color === "medium-pink"
+                                ? "#ff69b4"
+                                : "#808080", // medium-gray
+              }}
+            />
             {node.name}
           </span>
         ),
@@ -138,7 +149,17 @@ const ReviewPage: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}><ArrowLeftOutlined style={{ marginRight: '8px' }} /> 返回</div>,
+              title: (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <ArrowLeftOutlined style={{ marginRight: "8px" }} /> 返回
+                </div>
+              ),
               onClick: () => navigate(-1),
             },
           ]}
@@ -152,9 +173,9 @@ const ReviewPage: React.FC = () => {
             <Tree
               treeData={processedTreeData}
               fieldNames={{
-                title: 'title',
-                key: 'path',
-                children: 'children',
+                title: "title",
+                key: "path",
+                children: "children",
               }}
               expandedKeys={expandedKeys}
               onExpand={(keys) => setExpandedKeys(keys)}
@@ -189,4 +210,4 @@ const ReviewPage: React.FC = () => {
   );
 };
 
-export default ReviewPage; 
+export default ReviewPage;

@@ -8,4 +8,4 @@ interface FileIcons {
 }
 
 declare const fileIcons: FileIcons;
-export default fileIcons; 
+export default fileIcons;

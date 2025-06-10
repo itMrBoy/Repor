@@ -1,4 +1,4 @@
-import request from './axios';
+import request from "./axios";
 
 export interface FileContentResponse {
   code: number;
@@ -10,9 +10,9 @@ export interface FileContentResponse {
 
 export const fileService = {
   getFileContent: async (path: string): Promise<FileContentResponse> => {
-    return request('/file/content', {
-      method: 'GET',
+    return request("/file/content", {
+      method: "GET",
       params: { path },
     });
   },
-}; 
+};

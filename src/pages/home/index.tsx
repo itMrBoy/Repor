@@ -1,20 +1,20 @@
-import { Tabs, Input, Button, message, Space, List, Typography } from 'antd';
-import { SendOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import styles from './index.less';
-import { useState, useEffect } from 'react';
-import { useNavigate } from '@umijs/max';
-import { useModel } from '@umijs/max';
-import dayjs from 'dayjs';
-import { fileListService } from '@/services';
+import { Tabs, Input, Button, message, Space, List, Typography } from "antd";
+import { SendOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import styles from "./index.less";
+import { useState, useEffect } from "react";
+import { useNavigate } from "@umijs/max";
+import { useModel } from "@umijs/max";
+import dayjs from "dayjs";
+import { fileListService } from "@/services";
 
 export default function HomePage() {
-  const [gitUrl, setGitUrl] = useState('');
-  const [activeTab, setActiveTab] = useState('1');
-  const [path, setPath] = useState('');
+  const [gitUrl, setGitUrl] = useState("");
+  const [activeTab, setActiveTab] = useState("1");
+  const [path, setPath] = useState("");
   const [clonedProjects, setClonedProjects] = useState<any[]>([]);
-  
+
   const navigate = useNavigate();
-  const { state, actions } = useModel('tree');
+  const { state, actions } = useModel("tree");
   const { loading } = state;
 
   useEffect(() => {
@@ -26,23 +26,23 @@ export default function HomePage() {
       const response = await fileListService();
       setClonedProjects(response.data);
     } catch (error) {
-      console.error('Fetch projects error:', error);
-      message.error('获取项目列表失败');
+      console.error("Fetch projects error:", error);
+      message.error("获取项目列表失败");
     }
   };
 
   const handleProjectSelect = async (projectPath: string) => {
     try {
-      const response = await actions.fetchTreeData(projectPath, 'path');
+      const response = await actions.fetchTreeData(projectPath, "path");
       if (response.success) {
-        message.success('项目加载成功');
-        navigate('/review');
+        message.success("项目加载成功");
+        navigate("/review");
       } else {
         message.error(response.message);
       }
     } catch (error) {
-      console.error('Load project error:', error);
-      message.error('加载项目失败');
+      console.error("Load project error:", error);
+      message.error("加载项目失败");
     }
   };
 
@@ -52,12 +52,12 @@ export default function HomePage() {
 
   const handleGitUrlSubmit = async () => {
     if (!gitUrl) {
-      message.warning('请输入Git仓库地址');
+      message.warning("请输入Git仓库地址");
       return;
     }
-    
+
     try {
-      const response = await actions.fetchTreeData(gitUrl, 'git');
+      const response = await actions.fetchTreeData(gitUrl, "git");
       if (response.success) {
         message.success(response.message);
         return response;
@@ -65,7 +65,7 @@ export default function HomePage() {
         message.error(response.message);
       }
     } catch (error) {
-      console.error('Git clone error:', error);
+      console.error("Git clone error:", error);
     }
   };
 
@@ -75,12 +75,12 @@ export default function HomePage() {
 
   const handleProjectSubmit = async () => {
     if (!path) {
-      message.warning('请输入项目路径');
+      message.warning("请输入项目路径");
       return Promise.reject();
     }
 
     try {
-      const response = await actions.fetchTreeData(path, 'path');
+      const response = await actions.fetchTreeData(path, "path");
       if (response.success) {
         message.success(response.message);
         return response;
@@ -89,45 +89,56 @@ export default function HomePage() {
         return Promise.reject();
       }
     } catch (error) {
-      console.error('Analyze error:', error);
-      message.error('分析失败');
+      console.error("Analyze error:", error);
+      message.error("分析失败");
       return Promise.reject();
     }
   };
 
   const handleSubmit = async () => {
     let response;
-    if (activeTab === '2') {
+    if (activeTab === "2") {
       response = await handleGitUrlSubmit();
     } else {
       response = await handleProjectSubmit();
     }
     if (response?.success) {
-      navigate('/review');
+      navigate("/review");
     }
   };
 
   const items = [
     {
-      key: '1',
-      label: '历史项目',
+      key: "1",
+      label: "历史项目",
       children: (
         <div className={styles.scrollableList}>
           <List
             dataSource={clonedProjects}
             renderItem={(project) => (
-              <List.Item style={{ padding: '8px 0' }}>
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  width: '100%',
-                  color: 'white'
-                }}>
-                  <div style={{ fontSize: '16px', marginBottom: '4px', cursor: 'pointer' }} onClick={() => handleProjectSelect(project.path)}>{project.name}（ {project.path} ）</div>
-                  <div style={{ fontSize: '12px', opacity: 0.7 }}>
-                    <ClockCircleOutlined style={{ marginRight: '4px' }} />
-                    {dayjs(project.lastModified).format('YYYY-MM-DD HH:mm:ss')}
+              <List.Item style={{ padding: "8px 0" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    color: "white",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "16px",
+                      marginBottom: "4px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleProjectSelect(project.path)}
+                  >
+                    {project.name}（ {project.path} ）
+                  </div>
+                  <div style={{ fontSize: "12px", opacity: 0.7 }}>
+                    <ClockCircleOutlined style={{ marginRight: "4px" }} />
+                    {dayjs(project.lastModified).format("YYYY-MM-DD HH:mm:ss")}
                   </div>
                 </div>
               </List.Item>
@@ -137,18 +148,18 @@ export default function HomePage() {
       ),
     },
     {
-      key: '2',
-      label: 'Git源',
+      key: "2",
+      label: "Git源",
       children: (
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Input
             placeholder="请输入Git仓库地址"
             value={gitUrl}
             onChange={handleGitUrlChange}
-            style={{ width: '100%', maxWidth: '500px' }}
+            style={{ width: "100%", maxWidth: "500px" }}
           />
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={<SendOutlined />}
             onClick={handleSubmit}
             className={styles.submitButton}
@@ -160,18 +171,18 @@ export default function HomePage() {
       ),
     },
     {
-      key: '3',
-      label: '本地项目',
+      key: "3",
+      label: "本地项目",
       children: (
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Input
             placeholder="请输入项目路径"
             value={path}
             onChange={handlePathChange}
-            style={{ width: '100%', maxWidth: '500px' }}
+            style={{ width: "100%", maxWidth: "500px" }}
           />
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={<SendOutlined />}
             onClick={handleSubmit}
             className={styles.submitButton}
@@ -188,9 +199,7 @@ export default function HomePage() {
     <div className={styles.container}>
       <div className={styles.content}>
         <h1 className={styles.title}>Welcome to Repor</h1>
-        <p className={styles.subtitle}>
-          一个分析源码的ai助手
-        </p>
+        <p className={styles.subtitle}>一个分析源码的ai助手</p>
         <Tabs
           defaultActiveKey="1"
           items={items}

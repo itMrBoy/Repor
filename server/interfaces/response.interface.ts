@@ -1,4 +1,4 @@
-import { ResponseCode } from '../constants/response-code';
+import { ResponseCode } from "../constants/response-code";
 
 export interface ResponseData<T = any> {
   code: ResponseCode;
@@ -14,4 +14,5 @@ export interface PaginationData<T = any> {
   pageSize: number;
 }
 
-export interface PaginationResponse<T = any> extends ResponseData<PaginationData<T>> {} 
+export interface PaginationResponse<T = any>
+  extends ResponseData<PaginationData<T>> {}

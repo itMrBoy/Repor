@@ -7,17 +7,17 @@ export default defineConfig({
   ],
 
   npmClient: "pnpm",
-  
+
   // 添加全局样式
-  styles: ['/src/global.less'],
+  styles: ["/src/global.less"],
 
   alias: {
-    '@': '/src',
+    "@": "/src",
   },
 
   proxy: {
-    '/api': {
-      target: 'http://127.0.0.1:3000',
+    "/api": {
+      target: "http://127.0.0.1:3000",
       changeOrigin: true,
       // pathRewrite: { '^/api': '' },
     },

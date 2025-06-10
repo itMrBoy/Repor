@@ -46,4 +46,4 @@ export enum ResponseCode {
   CONFIG_ERROR = 4001, // 配置错误
   NETWORK_ERROR = 4002, // 网络错误
   DATABASE_ERROR = 4003, // 数据库错误
-} 
+}
